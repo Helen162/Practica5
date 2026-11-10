@@ -18,8 +18,9 @@ if st.session_state["sesion_iniciada"]:
         f"Usuario: {st.session_state['usuario']}"
     )
 
-    opciones = [
+        opciones = [
         "Ventas",
+        "Empleados",
         "Información"
     ]
 
