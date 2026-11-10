@@ -1,4 +1,3 @@
-
 import streamlit as st
 from modulos.login import login
 from modulos.VENTAS import mostrar_venta
