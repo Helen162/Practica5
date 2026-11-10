@@ -5,10 +5,10 @@ import streamlit as st
 def obtener_conexion():
     try:
         conexion = mysql.connector.connect(
-            host="TU_HOST",
-            user="TU_USUARIO",
-            password="TU_CONTRASENA",
-            database="TU_BASE_DE_DATOS",
+            host="by8sol7gd9p6ir6zueut-mysql.services.clever-cloud.com",
+            user="u8jd65h12y411u2v",
+            password="4KvhQa1h6Fk5wt4NL8v1",
+            database="by8sol7gd9p6ir6zueut",
             port=3306
         )
         return conexion
