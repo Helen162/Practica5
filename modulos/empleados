@@ -1,1 +1,92 @@
+import streamlit as st
+from config.conexion import obtener_conexion
 
+
+def registrar_empleado(nombre, cargo, fecha):
+    conexion = obtener_conexion()
+    if conexion is None:
+        return False
+    cursor = None
+    try:
+        cursor = conexion.cursor()
+        consulta = """
+        INSERT INTO EMPLEADOS
+        (Nombre, Cargo, Fecha_Ingreso)
+        VALUES (%s, %s, %s)
+        """
+        cursor.execute(consulta, (nombre, cargo, fecha))
+        conexion.commit()
+        return True
+    except Exception as error:
+        conexion.rollback()
+        st.error(f"Error al registrar el empleado: {error}")
+        return False
+    finally:
+        if cursor is not None:
+            cursor.close()
+        if conexion.is_connected():
+            conexion.close()
+
+
+def listar_empleados():
+    conexion = obtener_conexion()
+    if conexion is None:
+        return []
+    cursor = None
+    try:
+        cursor = conexion.cursor()
+        cursor.execute(
+            """
+            SELECT Id_Empleado, Nombre, Cargo, Fecha_Ingreso
+            FROM EMPLEADOS
+            ORDER BY Id_Empleado DESC
+            """
+        )
+        return cursor.fetchall()
+    except Exception as error:
+        st.error(f"Error al consultar los empleados: {error}")
+        return []
+    finally:
+        if cursor is not None:
+            cursor.close()
+        if conexion.is_connected():
+            conexion.close()
+
+
+def mostrar_empleados():
+    st.header("Gestión de empleados")
+
+    st.subheader("Registrar empleado")
+    with st.form("form_empleado", clear_on_submit=True):
+        nombre = st.text_input("Nombre completo")
+        cargo = st.selectbox(
+            "Cargo",
+            ["Vendedor", "Cajero", "Bodeguero", "Supervisor", "Administrador"]
+        )
+        fecha = st.date_input("Fecha de ingreso")
+        guardar = st.form_submit_button("Guardar empleado")
+
+    if guardar:
+        if nombre.strip() == "":
+            st.warning("Debe ingresar el nombre del empleado.")
+        elif registrar_empleado(nombre.strip(), cargo, fecha):
+            st.success("Empleado registrado correctamente.")
+
+    st.subheader("Lista de empleados")
+    empleados = listar_empleados()
+    if empleados:
+        st.dataframe(
+            [
+                {
+                    "ID": e[0],
+                    "Nombre": e[1],
+                    "Cargo": e[2],
+                    "Fecha de ingreso": e[3],
+                }
+                for e in empleados
+            ],
+            hide_index=True,
+            use_container_width=True
+        )
+    else:
+        st.info("Aún no hay empleados registrados.")
