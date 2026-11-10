@@ -32,7 +32,9 @@ if st.session_state["sesion_iniciada"]:
     # Mostrar módulo de ventas
     if seleccion == "Ventas":
         mostrar_venta()
-
+    # Mostrar módulo de empleados
+    elif seleccion == "Empleados":
+        mostrar_empleado()
     # Mostrar módulo de información
     elif seleccion == "Información":
         st.header("Información del sistema")
