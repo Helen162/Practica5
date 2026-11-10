@@ -1,7 +1,7 @@
 import streamlit as st
 from modulos.login import login
 from modulos.VENTAS import mostrar_venta
-from modulos.EMPLEADOS import mostrar_empleados  # Importar el módulo de empleados
+from modulos.EMPLEADOS import mostrar_empleados
 
 # Inicializar variables de sesión
 if "sesion_iniciada" not in st.session_state:
@@ -14,7 +14,6 @@ if st.session_state["sesion_iniciada"]:
     st.sidebar.title("Menú de Navegación")
     st.sidebar.write(f"Usuario: {st.session_state['usuario']}")
     
-    # Menú organizado con Ventas, Empleados e Información
     opciones = [
         "Ventas",
         "Empleados",
@@ -30,7 +29,7 @@ if st.session_state["sesion_iniciada"]:
     if seleccion == "Ventas":
         mostrar_venta()
         
-    # Mostrar módulo de empleados (Nuevo módulo agregado)
+    # Mostrar módulo de empleados
     elif seleccion == "Empleados":
         mostrar_empleados()
         
