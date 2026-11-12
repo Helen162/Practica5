@@ -1,3 +1,4 @@
+import os
 import streamlit as st
 from config.conexion import obtener_conexion
 
@@ -29,38 +30,14 @@ def verificar_usuario(correo, contrasena):
         if conexion.is_connected():
             conexion.close()
 
-def login():
-    col1, col2, col3 = st.columns([1, 1, 1])
-    with col2:
-        st.image("logo.png", use_container_width=True)
+def mostrar_logo():
+    # Busca logo.png en la raíz del proyecto (una carpeta arriba de modulos)
+    carpeta_raiz = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    ruta_logo = os.path.join(carpeta_raiz, "logo.png")
 
-    st.title("Inicio de sesión")
-    correo = st.text_input("Correo")
-    contrasena = st.text_input(
-        "Contraseña",
-        type="password"
-    )
-    if st.button("Iniciar sesión"):
-        if correo.strip() == "" or contrasena.strip() == "":
-            st.warning(
-                "Ingrese su correo y contraseña."
-            )
-        else:
-            resultado = verificar_usuario(
-                correo,
-                contrasena
-            )
-            if resultado:
-                estado = str(resultado[1]).strip().lower()
-                if estado in ("1", "activo", "true"):
-                    st.session_state["sesion_iniciada"] = True
-                    st.session_state["usuario"] = correo
-                    st.rerun()
-                else:
-                    st.error(
-                        "Usuario desactivado"
-                    )
-            else:
-                st.error(
-                    "Correo o contraseña incorrectos."
-                )
+    if os.path.exists(ruta_logo):
+        col1, col2, col3 = st.columns([1, 1, 1])
+        with col2:
+            st.image(ruta_logo, use_container_width=True)
+    else:
+        st.warning(f"No se encontró la imagen
