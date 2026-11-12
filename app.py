@@ -1,3 +1,4 @@
+import os
 import streamlit as st
 from modulos.login import login
 from modulos.ventas import mostrar_venta
@@ -12,6 +13,11 @@ if "usuario" not in st.session_state:
 
 # Comprobar si el usuario inició sesión
 if st.session_state["sesion_iniciada"]:
+
+    # Logo en el menú lateral (opcional)
+    ruta_logo = os.path.join(os.path.dirname(os.path.abspath(__file__)), "logo.png")
+    if os.path.exists(ruta_logo):
+        st.sidebar.image(ruta_logo, use_container_width=True)
 
     st.sidebar.title("Menú")
 
