@@ -1,8 +1,7 @@
-import os
 import streamlit as st
 from config.conexion import obtener_conexion
 
-def verificar_usuario(correo, contrasena):
+def verificar_usuario(usuario, contrasena):
     conexion = obtener_conexion()
     if conexion is None:
         return None
@@ -10,14 +9,14 @@ def verificar_usuario(correo, contrasena):
     try:
         cursor = conexion.cursor()
         consulta = """
-        SELECT Id_usuario, Estado
+        SELECT Id_Usuario
         FROM USUARIO
-        WHERE Correo = %s AND Contrasena = %s
+        WHERE Usuario = %s AND Contrasena = %s
         LIMIT 1
         """
         cursor.execute(
             consulta,
-            (correo, contrasena)
+            (usuario, contrasena)
         )
         resultado = cursor.fetchone()
         return resultado
@@ -30,58 +29,31 @@ def verificar_usuario(correo, contrasena):
         if conexion.is_connected():
             conexion.close()
 
-def mostrar_logo():
-    # Busca logo.png en la raíz del proyecto (una carpeta arriba de modulos)
-    carpeta_raiz = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-    ruta_logo = os.path.join(carpeta_raiz, "logo.png")
-
-    if os.path.exists(ruta_logo):
-        col1, col2, col3 = st.columns([1, 1, 1])
-        with col2:
-            st.image(ruta_logo, use_container_width=True)
-    else:
-        st.warning(f"No se encontró la imagen en: {ruta_logo}")
-
 def login():
-    # ---- Líneas de prueba (bórralas cuando todo funcione) ----
-    st.write("VERSIÓN NUEVA")
-    st.write("Carpeta actual:", os.getcwd())
-    st.write("Archivos:", os.listdir("."))
-    if os.path.exists("logo.png"):
-        st.write("logo.png existe, tamaño (bytes):", os.path.getsize("logo.png"))
-    else:
-        st.write("logo.png NO existe en la carpeta actual")
-    # ----------------------------------------------------------
-
-    mostrar_logo()
-
     st.title("Inicio de sesión")
-    correo = st.text_input("Correo")
+    usuario = st.text_input("Usuario")
     contrasena = st.text_input(
         "Contraseña",
         type="password"
     )
     if st.button("Iniciar sesión"):
-        if correo.strip() == "" or contrasena.strip() == "":
+        if usuario.strip() == "" or contrasena.strip() == "":
             st.warning(
-                "Ingrese su correo y contraseña."
+                "Ingrese su usuario y contraseña."
             )
         else:
             resultado = verificar_usuario(
-                correo,
+                usuario,
                 contrasena
             )
             if resultado:
-                estado = str(resultado[1]).strip().lower()
-                if estado in ("1", "activo", "true"):
-                    st.session_state["sesion_iniciada"] = True
-                    st.session_state["usuario"] = correo
-                    st.rerun()
-                else:
-                    st.error(
-                        "Usuario desactivado"
-                    )
+                st.session_state["sesion_iniciada"] = True
+                st.session_state["usuario"] = usuario
+                st.success(
+                    "Sesión iniciada correctamente."
+                )
+                st.rerun()
             else:
                 st.error(
-                    "Correo o contraseña incorrectos."
+                    "Usuario o contraseña incorrectos."
                 )
